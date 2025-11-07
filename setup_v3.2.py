@@ -230,7 +230,7 @@ def write_repo():
     from typing import Dict, Any, List, Optional
 
     class SQLiteRepository:
-        def __init__(self, db_path: str = 'vanilla_records.db', schema_path: str = 'src/infrastructure/db/schema.sql'):
+        def __init__(self, db_path: str = 'vanilla_records.db', schema_path: str = 'vanilla_records/src/infrastructure/db/schema.sql'):
             self.db_path = Path(db_path)
             self.conn = sqlite3.connect(self.db_path)
             self.conn.row_factory = sqlite3.Row
