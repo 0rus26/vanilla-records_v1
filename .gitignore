@@ -6,3 +6,5 @@ pytest_cache/
 .DS_Store
 .idea/
 .vscode/
+# Ignorar credenciales privadas de Google
+vanilla_records/src/config/google_drive_credentials.json
