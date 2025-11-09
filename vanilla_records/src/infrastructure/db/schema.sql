@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS lotes_insumo (
     proveedor_id INTEGER,
     cantidad_inicial REAL NOT NULL,
     cantidad_disponible REAL NOT NULL,
-    unidad TEXT DEFAULT 'g',        -- ✅ nuevo campo agregado
+    unidad TEXT DEFAULT 'g',
     precio_unitario REAL,
     fecha_compra TEXT,
     fecha_vencimiento TEXT,

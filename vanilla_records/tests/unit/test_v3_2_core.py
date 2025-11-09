@@ -7,8 +7,8 @@ def setup_module():
     try:
         if os.path.exists(DB):
             os.remove(DB)
-    except PermissionError:
-        pass  # Ignora si otro test ya la está usando
+    except (PermissionError, FileNotFoundError):
+        pass  # Ignora si otro test ya la está usando o ya se eliminó
 
 def test_core_flow():
     repo = SQLiteRepository(DB)
@@ -36,7 +36,7 @@ def test_core_flow():
     safer = repo.insert('insumos', {'nombre':'SaferSoil','tipo':'bio','unidad':'g','descripcion':'Mejora suelo'})
     lombr = repo.insert('insumos', {'nombre':'Lombrinaza','tipo':'abono','unidad':'g','descripcion':'Orgánico'})
 
-    # Lotes (precios/días distintos)
+    # Lotes
     lote_cal = repo.insert('lotes_insumo', {
         'insumo_id': cal, 'proveedor_id': prov1,
         'cantidad_inicial': 60000, 'cantidad_disponible': 60000,
@@ -53,7 +53,7 @@ def test_core_flow():
         'precio_unitario': 40_000/1000, 'fecha_compra':'2025-11-06'
     })
 
-    # Evento: aplicación a 10 plantas (100 g cal, 2 g Safer, 200 g lombrinaza por planta)
+    # Evento: aplicación a 10 plantas (100g cal, 2g safer, 200g lombrinaza por planta)
     eid = repo.crear_evento('abonado','Aplicación trio','2025-11-07', planta_ids)
     repo.consumir_lote_en_evento(eid, lote_cal, 100*10)
     repo.consumir_lote_en_evento(eid, lote_safer, 2*10)
@@ -64,7 +64,6 @@ def test_core_flow():
     assert stock[lote_safer]['cantidad_disponible'] == 1000 - 20
     assert stock[lote_lombr]['cantidad_disponible'] == 100000 - 2000
 
-    # Validar asociaciones planta-evento
     filas = repo.query('SELECT count(*) as c FROM evento_planta WHERE evento_id=?',(eid,))
     assert filas[0]['c']==10
 

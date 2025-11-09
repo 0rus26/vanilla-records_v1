@@ -8,8 +8,8 @@ def setup_module():
     try:
         if os.path.exists(DB):
             os.remove(DB)
-    except PermissionError:
-        pass  # Ignora si otro test ya la está usando
+    except (PermissionError, FileNotFoundError):
+        pass
 
 def test_stock_and_media_and_overconsume():
     repo = SQLiteRepository(DB)
@@ -20,15 +20,15 @@ def test_stock_and_media_and_overconsume():
         'cantidad_inicial': 5000, 'cantidad_disponible': 5000,
         'precio_unitario': 60_000/1000, 'fecha_compra':'2025-11-06'
     })
-    # Media de lote (factura)
+    # media de lote (factura)
     repo.insert('lote_media', {'lote_id': lote, 'file_path':'facturas/cal_1106.pdf','file_type':'pdf'})
-    # Evento de 1000g
+    # evento 1000g
     p = repo.insert('plantas', {'codigo':'P001'})
     e = repo.crear_evento('abonado','test','2025-11-07',[p])
     repo.consumir_lote_en_evento(e, lote, 1000)
-    # Intento de consumo excesivo (debería fallar por trigger)
+    # intento de sobreconsumo (debe fallar por trigger)
     with pytest.raises(Exception):
-        repo.consumir_lote_en_evento(e, lote, 5000)  # queda 4000 disp; 5000 > 4000 => abort
+        repo.consumir_lote_en_evento(e, lote, 5000)
 
     st = repo.resumen_stock()
     assert any(r['cantidad_disponible']==4000 for r in st)

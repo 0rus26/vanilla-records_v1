@@ -7,8 +7,8 @@ def setup_module():
     try:
         if os.path.exists(DB):
             os.remove(DB)
-    except PermissionError:
-        pass  # Ignora si otro test ya la está usando
+    except (PermissionError, FileNotFoundError):
+        pass
 
 def test_production_and_sales():
     repo = SQLiteRepository(DB)
@@ -33,7 +33,7 @@ def test_production_and_sales():
         'fecha_recoleccion':'2025-12-11','cantidad': 10,'unidad':'un','calidad':'B'
     })
 
-    # Ventas: 1) parte de cosecha (verde) 2) venta directa por tipo (curada)
+    # Ventas
     v1 = repo.insert('ventas', {
         'cosecha_id': c1, 'fecha':'2025-12-15','comprador':'Cliente A',
         'cantidad_vendida': 0.5, 'unidad':'kg', 'precio_unitario': 1200000

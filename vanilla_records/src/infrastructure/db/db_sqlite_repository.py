@@ -3,8 +3,13 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 
 class SQLiteRepository:
-    def __init__(self, db_path: str = 'vanilla_records.db', schema_path: str = 'vanilla_records/src/infrastructure/db/schema.sql'):
+    def __init__(self, db_path: str = 'vanilla_records.db', schema_path: str = None):
         self.db_path = Path(db_path)
+        if schema_path is None:
+            base = Path(__file__).resolve().parent
+            schema_path = base / "schema.sql"
+        else:
+            schema_path = Path(schema_path)
         self.conn = sqlite3.connect(self.db_path)
         self.conn.row_factory = sqlite3.Row
         self._init_schema(schema_path)
