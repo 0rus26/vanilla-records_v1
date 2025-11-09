@@ -18,3 +18,8 @@ vanilla_records/src/config/google_oauth_token.json
 .pytest_cache/
 .coverage
 htmlcov/
+# Archivos de prueba locales
+test_cargar_imagen.py
+test_*.jpg
+test_*.mp4
+
